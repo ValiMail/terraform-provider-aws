@@ -389,8 +389,9 @@ func resourceAwsDbInstanceCreate(d *schema.ResourceData, meta interface{}) error
 			Tags:                       tags,
 		}
 
-		if arnParts := strings.Split(d.Get("replicate_source_db").(string), ":"); len(arnParts) >= 4 {
-			opts.SourceRegion = aws.String(arnParts[3])
+		arnParts, arnErr := arn.Parse(d.Get("replicate_source_db").(string))
+		if arnErr == nil {
+			opts.SourceRegion = aws.String(arnParts.Region)
 		}
 
 		if attr, ok := d.GetOk("iops"); ok {
