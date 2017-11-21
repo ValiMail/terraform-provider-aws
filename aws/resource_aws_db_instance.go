@@ -389,11 +389,6 @@ func resourceAwsDbInstanceCreate(d *schema.ResourceData, meta interface{}) error
 			Tags:                       tags,
 		}
 
-		arnParts, arnErr := arn.Parse(d.Get("replicate_source_db").(string))
-		if arnErr == nil {
-			opts.SourceRegion = aws.String(arnParts.Region)
-		}
-
 		if attr, ok := d.GetOk("iops"); ok {
 			opts.Iops = aws.Int64(int64(attr.(int)))
 		}
@@ -425,11 +420,11 @@ func resourceAwsDbInstanceCreate(d *schema.ResourceData, meta interface{}) error
 		//
 		// go figure, eh?
 		//
-		replicaRegion := meta.(*AWSClient).region
-
 		arnParts, arnErr := arn.Parse(d.Get("replicate_source_db").(string))
 		if arnErr == nil {
-			if arnParts.Region != replicaRegion {
+			var replicaRegion string
+			replicaRegion = (string)(*opts.AvailabilityZone)
+			if arnParts.Region != replicaRegion[0:len(replicaRegion)-1] {
 				opts.SourceRegion = aws.String(arnParts.Region)
 			}
 		}
