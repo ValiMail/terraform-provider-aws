@@ -4,6 +4,7 @@ jobs:
     docker:
       - image: circleci/golang:latest
     environment:
+      - GOPATH: "~/go"
       - PKG_ROOT: "./pkg"
       - SRC_ROOT: "src/github.com/terraform-providers"
     working_directory: ~/
@@ -26,7 +27,7 @@ jobs:
             go get -u github.com/golang/dep/cmd/dep
             go get -u github.com/hashicorp/terraform/plugin
       - checkout:
-          path: $GOPATH/$SRC_ROOT
+          path: $GOPATH/$SRC_ROOT/terraform-provider-aws
       - run:
           name: Make and run basic tests on Linux
           command: cd $GOPATH/src/github.com/terraform-providers/terraform-provider-aws && make && make test
