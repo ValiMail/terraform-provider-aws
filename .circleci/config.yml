@@ -1,0 +1,80 @@
+version: 2
+jobs:
+  build-job:
+    docker:
+      - image: circleci/golang:latest
+    environment:
+      - SRC_ROOT: "src/github.com/terraform-providers"
+    working_directory: ~/terraform-provider-aws
+    steps:
+      - restore_cache:
+          keys:
+            - golang-cache-1-9-2
+      - run: echo 'export GOPATH=$HOME/go' >> $BASH_ENV
+      - checkout
+      - run:
+          name: Using Golang 1.9.2
+          command: |
+            sudo rm -rf /usr/local/go
+            if [ ! -e ~/go1.9.2.linux-amd64.tar.gz ]; then curl -o ~/go1.9.2.linux-amd64.tar.gz https://storage.googleapis.com/golang/go1.9.2.linux-amd64.tar.gz; fi
+            sudo tar -C /usr/local -xzf ~/go1.9.2.linux-amd64.tar.gz
+      - run:
+          name: Setting up Go workspace
+          command: |
+            rm -rf $GOPATH/$SRC_ROOT
+            mkdir -p $GOPATH/$SRC_ROOT
+            go get -u github.com/tcnksm/ghr
+            go get -u github.com/golang/dep/cmd/dep
+            go get -u github.com/hashicorp/terraform/plugin
+            ln -s ~/terraform-provider-aws $GOPATH/$SRC_ROOT/terraform-provider-aws
+      - run:
+          name: Make and run basic tests on Linux
+          command: cd $GOPATH/$SRC_ROOT/terraform-provider-aws && make && make test
+      - run:
+          name: Create MacOS package
+          command: ./scripts/package.sh ${CIRCLE_TAG}
+      - run:
+          name: Move assets for deploy step
+          command: mv $GOPATH/bin ~/terraform-provider-aws
+      - save_cache:
+          key: golang-cache-1-9-2
+          paths:
+            - ~/go1.9.2.linux-amd64.tar.gz
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./bin
+            - ./.git
+
+  deploy-job:
+    docker:
+      - image: circleci/golang:latest
+    environment:
+      - SRC_ROOT: "src/github.com/terraform-providers"
+    working_directory: ~/terraform-provider-aws
+    steps:
+      - attach_workspace:
+          at: .
+      - run: echo 'export GOPATH=$HOME/go' >> $BASH_ENV
+      - run:
+          name: Release package to github
+          command: bin/ghr -u "ValiMail" -r "terraform-provider-aws" "${CIRCLE_TAG}" "bin/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build-job:
+          filters:
+            tags:
+              only: /^v.*_valimail.*/
+            branches:
+              only: integration/valimail_aws_provider
+      - deploy-job:
+          requires:
+            - build-job
+          filters:
+            tags:
+              only: /^v.*_valimail.*/
+            branches:
+              ignore: /.*/
