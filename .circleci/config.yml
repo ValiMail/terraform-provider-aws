@@ -11,6 +11,7 @@ jobs:
       - restore_cache:
           keys:
             - golang-cache-1-9-2
+      - checkout
       - run:
           name: Using Golang 1.9.2
           command: |
@@ -26,7 +27,6 @@ jobs:
             go get -u github.com/golang/dep/cmd/dep
             go get -u github.com/hashicorp/terraform/plugin
             ln -s ~/terraform-provider-aws $GOPATH/$SRC_ROOT/terraform-provider-aws
-      - checkout
       - run:
           name: Make and run basic tests on Linux
           command: cd $GOPATH/$SRC_ROOT/terraform-provider-aws && make && make test
