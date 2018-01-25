@@ -33,11 +33,15 @@ jobs:
       - run:
           name: Create MacOS package
           command: ./scripts/package.sh ${CIRCLE_TAG}
+      - save_cache:
+          key: golang-cache-1-9-2
+          paths:
+            - ~/go1.9.2.linux-amd64.tar.gz
       - persist_to_workspace:
           root: /go
           paths:
             - bin/*
-            - src/github.com/terraform-providers/pkg/*
+            - src/github.com/terraform-providers/*
 
   deploy-job:
     docker:
@@ -51,7 +55,9 @@ jobs:
           at: /go
       - run:
           name: Release package to github
-          command: $GOPATH/bin/ghr -u "${CIRCLE_USERNAME}" ${CIRCLE_TAG} "$GOPATH/$SRC_ROOT/${PKG_ROOT}/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
+          command: |
+            cd $GOPATH/$SRC_ROOT/terraform-provider-aws
+            $GOPATH/bin/ghr -u "${CIRCLE_USERNAME}" ${CIRCLE_TAG} "$GOPATH/$SRC_ROOT/${PKG_ROOT}/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
 
 workflows:
   version: 2
