@@ -34,10 +34,10 @@ jobs:
           name: Create MacOS package
           command: ./scripts/package.sh ${CIRCLE_TAG}
       - persist_to_workspace:
-          root: $GOPATH
+          root: /go
           paths:
             - bin/*
-            - $SRC_ROOT/terraform-provider-aws/pkg/*
+            - src/github.com/terraform-providers/terraform-provider-aws/pkg/*
 
   deploy-job:
     docker:
@@ -48,10 +48,10 @@ jobs:
     working_directory: ~/terraform-provider-aws
     steps:
       - attach_workspace:
-          at: .
+          at: /go
       - run:
           name: Release package to github
-          command: $GOPATH/bin/ghr -u "${CIRCLE_USERNAME}" ${CIRCLE_TAG} "${PKG_ROOT}/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
+          command: $GOPATH/bin/ghr -u "${CIRCLE_USERNAME}" ${CIRCLE_TAG} "$GOPATH/$SRC_ROOT/terraform-provider-aws/${PKG_ROOT}/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
 
 workflows:
   version: 2
