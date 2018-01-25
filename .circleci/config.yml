@@ -54,7 +54,7 @@ jobs:
           command: $GOPATH/bin/ghr -u "${CIRCLE_USERNAME}" ${CIRCLE_TAG} "$GOPATH/$SRC_ROOT/${PKG_ROOT}/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
 
 workflows:
-  version: 2l
+  version: 2
   build-deploy:
     jobs:
       - build-job:
