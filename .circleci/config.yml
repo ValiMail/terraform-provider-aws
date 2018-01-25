@@ -47,6 +47,6 @@ workflows:
       - build-job:
           filters:
             tags:
-              only: /^v.*_valimail/
+              only: /^v.*_valimail.*/
             branches:
               only: integration/valimail_aws_provider
