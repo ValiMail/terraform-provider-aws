@@ -34,9 +34,10 @@ jobs:
           name: Create MacOS package
           command: ./scripts/package.sh ${CIRCLE_TAG}
       - persist_to_workspace:
-          root: .
+          root: $GOPATH
           paths:
-            - go/*
+            - bin/*
+            - $SRC_ROOT/terraform-provider-aws/pkg/*
 
   deploy-job:
     docker:
