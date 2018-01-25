@@ -37,7 +37,7 @@ jobs:
           root: /go
           paths:
             - bin/*
-            - src/github.com/terraform-providers/terraform-provider-aws/pkg/*
+            - src/github.com/terraform-providers/pkg/*
 
   deploy-job:
     docker:
