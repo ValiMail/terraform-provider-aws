@@ -48,7 +48,7 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-     - run:
+      - run:
           name: Release package to github
           command: $GOPATH/bin/ghr -u "${CIRCLE_USERNAME}" ${CIRCLE_TAG} "${PKG_ROOT}/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
 
