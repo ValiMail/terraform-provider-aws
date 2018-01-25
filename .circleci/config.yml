@@ -35,7 +35,7 @@ jobs:
           command: ./scripts/package.sh ${CIRCLE_TAG}
       - run:
           name: Release package to github
-          command: $GOPATH/bin/ghr -t "${CIRCLE_API_TOKEN}" ${CIRCLE_TAG} "${PKG_ROOT}/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
+          command: $GOPATH/bin/ghr -t "${CIRCLE_API_TOKEN}" -u "${CIRCLE_USERNAME}" ${CIRCLE_TAG} "${PKG_ROOT}/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
       - save_cache:
           key: golang-cache-1-9-2
           paths:
