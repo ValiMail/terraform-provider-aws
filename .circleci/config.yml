@@ -11,6 +11,7 @@ jobs:
       - restore_cache:
           keys:
             - golang-cache-1-9-2
+      - run: echo 'export GOPATH=$HOME/go' >> $BASH_ENV
       - checkout
       - run:
           name: Using Golang 1.9.2
@@ -38,7 +39,7 @@ jobs:
           paths:
             - ~/go1.9.2.linux-amd64.tar.gz
       - persist_to_workspace:
-          root: /go
+          root: .
           paths:
             - bin/*
             - src/github.com/terraform-providers/*
@@ -52,7 +53,7 @@ jobs:
     working_directory: ~/terraform-provider-aws
     steps:
       - attach_workspace:
-          at: /go
+          at: .
       - run:
           name: Release package to github
           command: |
