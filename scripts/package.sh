@@ -13,5 +13,6 @@ cd "${GOPATH}/${SRC_ROOT}"
 mkdir -p "${DEST}"
 
 GOOS=darwin GOARCH=amd64 go build -o "${DEST}/terraform-provider-aws_${CIRCLE_TAG}" terraform-provider-aws/main.go
+chmod +x "${DEST}/terraform-provider-aws_${CIRCLE_TAG}"
 gzip "${DEST}/terraform-provider-aws_${CIRCLE_TAG}"
 
