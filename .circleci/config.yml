@@ -6,7 +6,7 @@ jobs:
     environment:
       - PKG_ROOT: "./pkg"
       - SRC_ROOT: "src/github.com/terraform-providers"
-    working_directory: ~/terraform-provider-aws
+    working_directory: ~/go/src/github.com/terraform-providers/terraform-provider-aws
     steps:
       - restore_cache:
           keys:
@@ -17,17 +17,14 @@ jobs:
           name: Using Golang 1.9.2
           command: |
             sudo rm -rf /usr/local/go
-            if [ ! -e go1.9.2.linux-amd64.tar.gz ]; then curl -o go1.9.2.linux-amd64.tar.gz https://storage.googleapis.com/golang/go1.9.2.linux-amd64.tar.gz; fi
-            sudo tar -C /usr/local -xzf go1.9.2.linux-amd64.tar.gz
+            if [ ! -e ~/go1.9.2.linux-amd64.tar.gz ]; then curl -o ~/go1.9.2.linux-amd64.tar.gz https://storage.googleapis.com/golang/go1.9.2.linux-amd64.tar.gz; fi
+            sudo tar -C /usr/local -xzf ~/go1.9.2.linux-amd64.tar.gz
       - run:
           name: Setting up Go workspace
           command: |
-            rm -rf $GOPATH/$SRC_ROOT
-            mkdir -p $GOPATH/$SRC_ROOT
             go get -u github.com/tcnksm/ghr
             go get -u github.com/golang/dep/cmd/dep
             go get -u github.com/hashicorp/terraform/plugin
-            ln -s ~/terraform-provider-aws $GOPATH/$SRC_ROOT/terraform-provider-aws
       - run:
           name: Make and run basic tests on Linux
           command: cd $GOPATH/$SRC_ROOT/terraform-provider-aws && make && make test
@@ -50,7 +47,7 @@ jobs:
     environment:
       - PKG_ROOT: "./pkg"
       - SRC_ROOT: "src/github.com/terraform-providers"
-    working_directory: ~/terraform-provider-aws
+    working_directory: ~/go/src/github.com/terraform-providers/terraform-provider-aws
     steps:
       - attach_workspace:
           at: .
