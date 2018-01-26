@@ -58,7 +58,7 @@ jobs:
       - run: echo 'export GOPATH=$HOME/go' >> $BASH_ENV
       - run:
           name: Release package to github
-          command: bin/ghr -u "${CIRCLE_USERNAME}" ${CIRCLE_TAG} "bin/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
+          command: bin/ghr -u "${CIRCLE_USERNAME}" -r "${CIRCLE_REPOSITORY_URL}" "${CIRCLE_TAG}" "bin/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
 
 workflows:
   version: 2
