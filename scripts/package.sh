@@ -2,8 +2,6 @@
 REV=$(git rev-parse HEAD | cut -c1-6)
 DEST="${GOPATH}/bin/darwin_amd64"
 
-# force a change, so I can add a new tag
-
 BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%S%z)
 BUILD_FLAGS="-X main.Version=${REV} -X main.BuildDate='${BUILD_DATE}'"
 
