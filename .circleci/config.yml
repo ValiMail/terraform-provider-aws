@@ -44,7 +44,6 @@ jobs:
           root: .
           paths:
             - ./bin
-            - ./.git
 
   deploy-job:
     docker:
@@ -58,7 +57,7 @@ jobs:
       - run: echo 'export GOPATH=$HOME/go' >> $BASH_ENV
       - run:
           name: Release package to github
-          command: bin/ghr -u "ValiMail" -r "terraform-provider-aws" "${CIRCLE_TAG}" "bin/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}"
+          command: bin/ghr -u "ValiMail" -r "terraform-provider-aws" "${CIRCLE_TAG}" "bin/darwin_amd64/terraform-provider-aws_${CIRCLE_TAG}.gz"
 
 workflows:
   version: 2
