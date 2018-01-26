@@ -1,6 +1,6 @@
 #!/bin/bash
 REV=$(git rev-parse HEAD | cut -c1-6)
-DEST="${PKG_ROOT}/darwin_amd64"
+DEST="${GOPATH}/bin/darwin_amd64"
 
 BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%S%z)
 BUILD_FLAGS="-X main.Version=${REV} -X main.BuildDate='${BUILD_DATE}'"
