@@ -41,7 +41,7 @@ jobs:
           root: .
           paths:
             - ./*
-            - $GOPATH/bin
+            - /home/go/bin
 
   deploy-job:
     docker:
