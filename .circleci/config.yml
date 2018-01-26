@@ -33,6 +33,9 @@ jobs:
       - run:
           name: Create MacOS package
           command: ./scripts/package.sh ${CIRCLE_TAG}
+      - run:
+          name: Move assets for deploy step
+          command: mv $GOPATH/bin ~/terraform-provider-aws
       - save_cache:
           key: golang-cache-1-9-2
           paths:
@@ -40,8 +43,8 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - ./*
-            - /home/go/bin
+            - ./bin
+            - ./.git
 
   deploy-job:
     docker:
