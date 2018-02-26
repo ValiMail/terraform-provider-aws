@@ -273,20 +273,33 @@ resource "aws_ssm_parameter" "foo" {
 func testAccAWSSSMParameterBasicConfigOverwrite(rName, pType, value string) string {
 	return fmt.Sprintf(`
 resource "aws_ssm_parameter" "foo" {
-  name  = "%s"
-  type  = "%s"
-  value = "%s"
+  name  = "test_parameter-%[1]s"
+  description  = "description for parameter %[1]s"
+  type  = "%[2]s"
+  value = "%[3]s"
   overwrite = true
 }
 `, rName, pType, value)
 }
 
+func testAccAWSSSMParameterSecureConfig(rName string, value string) string {
+	return fmt.Sprintf(`
+resource "aws_ssm_parameter" "secret_foo" {
+  name  = "test_secure_parameter-%[1]s"
+  description  = "description for parameter %[1]s"
+  type  = "SecureString"
+  value = "%[2]s"
+}
+`, rName, value)
+}
+
 func testAccAWSSSMParameterSecureConfigWithKey(rName string, value string) string {
 	return fmt.Sprintf(`
 resource "aws_ssm_parameter" "secret_foo" {
-  name  = "test_secure_parameter-%s"
+  name  = "test_secure_parameter-%[1]s"
+  description  = "description for parameter %[1]s"
   type  = "SecureString"
-  value = "%s"
+  value = "%[2]s"
 	key_id = "${aws_kms_key.test_key.id}"
 }
 
@@ -295,4 +308,36 @@ resource "aws_kms_key" "test_key" {
   deletion_window_in_days = 7
 }
 `, rName, value)
+}
+
+func TestAWSSSMParameterShouldUpdate(t *testing.T) {
+	data := resourceAwsSsmParameter().TestResourceData()
+	failure := false
+
+	if !shouldUpdateSsmParameter(data) {
+		t.Logf("Existing resources should be overwritten if the values don't match!")
+		failure = true
+	}
+
+	data.MarkNewResource()
+	if shouldUpdateSsmParameter(data) {
+		t.Logf("New resources must never be overwritten, this will overwrite parameters created outside of the system")
+		failure = true
+	}
+
+	data = resourceAwsSsmParameter().TestResourceData()
+	data.Set("overwrite", true)
+	if !shouldUpdateSsmParameter(data) {
+		t.Logf("Resources should always be overwritten if the user requests it")
+		failure = true
+	}
+
+	data.Set("overwrite", false)
+	if shouldUpdateSsmParameter(data) {
+		t.Logf("Resources should never be overwritten if the user requests it")
+		failure = true
+	}
+	if failure {
+		t.Fail()
+	}
 }
