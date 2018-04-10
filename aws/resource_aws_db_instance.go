@@ -808,20 +808,20 @@ func resourceAwsDbInstanceRead(d *schema.ResourceData, meta interface{}) error {
 	// set tags
 	conn := meta.(*AWSClient).rdsconn
 
-	arn := arn.ARN{
+	builtArn := arn.ARN{
 		Partition: meta.(*AWSClient).partition,
 		Service:   "rds",
 		Region:    meta.(*AWSClient).region,
 		AccountID: meta.(*AWSClient).accountid,
 		Resource:  fmt.Sprintf("db:%s", d.Id()),
 	}.String()
-	d.Set("arn", arn)
+	d.Set("arn", builtArn)
 	resp, err := conn.ListTagsForResource(&rds.ListTagsForResourceInput{
-		ResourceName: aws.String(arn),
+		ResourceName: aws.String(builtArn),
 	})
 
 	if err != nil {
-		log.Printf("[DEBUG] Error retrieving tags for ARN: %s", arn)
+		log.Printf("[DEBUG] Error retrieving tags for ARN: %s", builtArn)
 	}
 
 	var dt []*rds.Tag
