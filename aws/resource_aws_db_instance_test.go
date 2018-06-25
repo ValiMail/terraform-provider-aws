@@ -283,7 +283,7 @@ func TestAccAWSDBInstance_replica(t *testing.T) {
 
 func TestAccAWSDBInstanceReplicaSameRegionWithArn(t *testing.T) {
 	var s, r rds.DBInstance
-	var id int
+	var id string
 
 	region := "us-east-1"
 	id = acctest.RandomWithPrefix("tf-acc-pr-3701")
@@ -315,7 +315,7 @@ func TestAccAWSDBInstanceReplicaSameRegionWithArn(t *testing.T) {
 
 func TestAccAWSDBInstanceReplicaCrossRegion(t *testing.T) {
 	var s, r rds.DBInstance
-	var id int
+	var id string
 
 	region := "us-east-1"
 	id = acctest.RandomWithPrefix("tf-acc-pr-3701")
