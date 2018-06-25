@@ -286,7 +286,7 @@ func TestAccAWSDBInstanceReplicaSameRegionWithArn(t *testing.T) {
 	var id int
 
 	region := "us-east-1"
-	id = rand.New(rand.NewSource(time.Now().UnixNano())).Int()
+	id = acctest.RandomWithPrefix("tf-acc-pr-3701")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -296,7 +296,7 @@ func TestAccAWSDBInstanceReplicaSameRegionWithArn(t *testing.T) {
 			{
 				Config: testAccReplicaInstanceSameRegionWithArnConfig(
 					id,
-					fmt.Sprintf("arn:aws:rds:%s:%s:db:foobarbaz-test-terraform-%v",
+					fmt.Sprintf("arn:aws:rds:%s:%s:db:%s",
 						region,
 						"123456789012",
 						id,
@@ -318,7 +318,7 @@ func TestAccAWSDBInstanceReplicaCrossRegion(t *testing.T) {
 	var id int
 
 	region := "us-east-1"
-	id = rand.New(rand.NewSource(time.Now().UnixNano())).Int()
+	id = acctest.RandomWithPrefix("tf-acc-pr-3701")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -328,7 +328,7 @@ func TestAccAWSDBInstanceReplicaCrossRegion(t *testing.T) {
 			{
 				Config: testAccReplicaInstanceCrossRegionConfig(
 					id,
-					fmt.Sprintf("arn:aws:rds:%s:%s:db:foobarbaz-test-terraform-%v",
+					fmt.Sprintf("arn:aws:rds:%s:%s:db:%s",
 						region,
 						"123456789012",
 						id,
@@ -1113,7 +1113,7 @@ func testAccReplicaInstanceConfig(val int) string {
 	`, val, val)
 }
 
-func testAccReplicaInstanceSameRegionWithArnConfig(val int, arn string) string {
+func testAccReplicaInstanceSameRegionWithArnConfig(val string, arn string) string {
 	return fmt.Sprintf(`
 	resource "aws_db_instance" "bar" {
 		identifier = "%s"
@@ -1134,7 +1134,7 @@ func testAccReplicaInstanceSameRegionWithArnConfig(val int, arn string) string {
 	}
 
 	resource "aws_db_instance" "replica" {
-		identifier = "tf-replica-db-%d"
+		identifier = "tf-replica-%s"
 		backup_retention_period = 0
 		availability_zone = "us-east-1a"
 		replicate_source_db = "${aws_db_instance.bar.identifier}"
@@ -1152,7 +1152,7 @@ func testAccReplicaInstanceSameRegionWithArnConfig(val int, arn string) string {
 	`, arn, val)
 }
 
-func testAccReplicaInstanceCrossRegionConfig(val int, arn string) string {
+func testAccReplicaInstanceCrossRegionConfig(val string, arn string) string {
 	return fmt.Sprintf(`
 	resource "aws_db_instance" "bar" {
 		identifier = "%s"
@@ -1173,7 +1173,7 @@ func testAccReplicaInstanceCrossRegionConfig(val int, arn string) string {
 	}
 
 	resource "aws_db_instance" "replica" {
-		identifier = "tf-replica-db-%d"
+		identifier = "tf-replica-%s"
 		backup_retention_period = 0
 		availability_zone = "us-east-2a"
 		replicate_source_db = "${aws_db_instance.bar.identifier}"
